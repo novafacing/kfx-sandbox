@@ -78,8 +78,10 @@ jobs:
       id: build_kfx_deb
       run: |
         sh -c 'cd kfx && sh package/build.sh ${{ matrix.container }}'
-        kfx_DEB_PATH=$(find kfx/package/out/*.deb | head -n1)
+        kfx_EXISTING_DEB_PATH=$(find kfx/package/out/*.deb | head -n1)
         kfx_DEB_NAME=$(basename "$kfx_DEB_PATH")
+        kfx_DEB_PATH="${{ steps.gen_vars.outputs.artifact_prefix }}-${kfx_DEB_NAME}"
+        mv "${kfx_EXISTING_DEB_PATH}" "${kfx_DEB_PATH}"
         echo "kfx_deb_path::${kfx_DEB_PATH}" >> $GITHUB_OUTPUT
         echo "kfx_deb_name::${{ steps.gen_vars.outputs.artifact_prefix }}_${kfx_DEB_NAME}" >> $GITHUB_OUTPUT
     - name: Upload kfx release asset
