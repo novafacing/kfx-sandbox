@@ -55,8 +55,8 @@ jobs:
         echo "Artifact prefix: $ARTIFACT_PREFIX"
         RELEASE_URL=$(cat release-url/release-url.txt)
         echo "Release URL: $RELEASE_URL"
-        echo "artifact_prefix::${ARTIFACT_PREFIX}" >> $GITHUB_OUTPUT
-        echo "release_url::${RELEASE_URL}" >> $GITHUB_OUTPUT
+        echo "artifact_prefix=${ARTIFACT_PREFIX}" >> $GITHUB_OUTPUT
+        echo "release_url=${RELEASE_URL}" >> $GITHUB_OUTPUT
     - name: Checkout KFX Sandbox
       uses: actions/checkout@v3
       with:
@@ -66,7 +66,7 @@ jobs:
       id: get_kfx_ref
       run: |
         KFX_REF=$(sh -c 'cd sandbox && git ls-tree HEAD kernel-fuzzer-for-xen-project' | cut -f3 '-d ' | cut -f1 -d$'\t')
-        echo "kfx_ref::${KFX_REF}" >> $GITHUB_OUTPUT
+        echo "kfx_ref=${KFX_REF}" >> $GITHUB_OUTPUT
     - name: Checkout kfx
       uses: actions/checkout@v3
       with:
@@ -82,8 +82,8 @@ jobs:
         kfx_DEB_NAME=$(basename "$kfx_DEB_PATH")
         kfx_DEB_PATH="${{ steps.gen_vars.outputs.artifact_prefix }}-${kfx_DEB_NAME}"
         mv "${kfx_EXISTING_DEB_PATH}" "${kfx_DEB_PATH}"
-        echo "kfx_deb_path::${kfx_DEB_PATH}" >> $GITHUB_OUTPUT
-        echo "kfx_deb_name::${{ steps.gen_vars.outputs.artifact_prefix }}_${kfx_DEB_NAME}" >> $GITHUB_OUTPUT
+        echo "kfx_deb_path=${kfx_DEB_PATH}" >> $GITHUB_OUTPUT
+        echo "kfx_deb_name=${{ steps.gen_vars.outputs.artifact_prefix }}_${kfx_DEB_NAME}" >> $GITHUB_OUTPUT
     - name: Upload kfx release asset
       uses: softprops/action-gh-release@v1
       with:
