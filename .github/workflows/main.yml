@@ -86,7 +86,6 @@ jobs:
         echo "kfx_deb_name::${{ steps.gen_vars.outputs.artifact_prefix }}_${kfx_DEB_NAME}" >> $GITHUB_OUTPUT
     - name: Upload kfx release asset
       uses: actions/action-gh-release@v1
-      env:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
         repository: novafacing/kfx-sandbox
