@@ -55,7 +55,7 @@ jobs:
         kfx_DEB_NAME=$(basename "${kfx_EXISTING_DEB_PATH}")
         kfx_DEB_DIR=$(dirname "${kfx_EXISTING_DEB_PATH}")
         kfx_DEB_PATH="${kfx_DEB_DIR}/${{ steps.gen_vars.outputs.artifact_prefix }}-${kfx_DEB_NAME}"
-        sh -c 'cp "${kfx_EXISTING_DEB_PATH}" "${kfx_DEB_PATH}"'
+        sh -c "cp ${kfx_EXISTING_DEB_PATH} ${kfx_DEB_PATH}"
         echo "kfx_deb_path=${kfx_DEB_PATH}" >> $GITHUB_OUTPUT
         echo "kfx_deb_name=${{ steps.gen_vars.outputs.artifact_prefix }}_${kfx_DEB_NAME}" >> $GITHUB_OUTPUT
     - name: Upload kfx release asset
