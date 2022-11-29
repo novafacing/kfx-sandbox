@@ -8,27 +8,6 @@ on:
       - 'dev-build_*'
 
 jobs:
-  release:
-    runs-on: ubuntu-20.04
-    steps:
-    - name: Create a Release
-      uses: actions/create-release@v1
-      id: create_release
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ github.ref }}
-        release_name: KFX Sandbox ${{ github.ref }}
-        draft: true
-        prerelease: false
-    - name: Store release URL as file
-      run: |
-        echo "${{ steps.create_release.outputs.upload_url }}" > release-url.txt
-    - name: Upload release URL artifact
-      uses: actions/upload-artifact@v1
-      with:
-        name: release-url
-        path: release-url.txt
   build:
     needs: [release]
     runs-on: ubuntu-20.04
