@@ -55,10 +55,10 @@ jobs:
         echo "Artifact prefix: $ARTIFACT_PREFIX"
         RELEASE_URL=$(cat release-url/release-url.txt)
         echo "Release URL: $RELEASE_URL"
-        echo "::set-output name=artifact_prefix::${ARTIFACT_PREFIX}"
-        echo "::set-output name=release_url::${RELEASE_URL}"
+        echo "artifact_prefix::${ARTIFACT_PREFIX}" >> $GITHUB_OUTPUT
+        echo "release_url::${RELEASE_URL}" >> $GITHUB_OUTPUT
     - name: Checkout KFX Sandbox
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         path: sandbox
         submodules: false
@@ -66,9 +66,9 @@ jobs:
       id: get_kfx_ref
       run: |
         KFX_REF=$(sh -c 'cd sandbox && git ls-tree HEAD kernel-fuzzer-for-xen-project' | cut -f3 '-d ' | cut -f1 -d$'\t')
-        echo "::set-output name=kfx_ref::${KFX_REF}"
+        echo "kfx_ref::${KFX_REF}" >> $GITHUB_OUTPUT
     - name: Checkout kfx
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: neelkrish/kernel-fuzzer-for-xen-project
         path: kfx
@@ -80,14 +80,13 @@ jobs:
         sh -c 'cd kfx && sh package/build.sh ${{ matrix.container }}'
         kfx_DEB_PATH=$(find kfx/package/out/*.deb | head -n1)
         kfx_DEB_NAME=$(basename "$kfx_DEB_PATH")
-        echo "::set-output name=kfx_deb_path::${kfx_DEB_PATH}"
-        echo "::set-output name=kfx_deb_name::${{ steps.gen_vars.outputs.artifact_prefix }}_${kfx_DEB_NAME}"
+        echo "kfx_deb_path::${kfx_DEB_PATH}" >> $GITHUB_OUTPUT
+        echo "kfx_deb_name::${{ steps.gen_vars.outputs.artifact_prefix }}_${kfx_DEB_NAME}" >> $GITHUB_OUTPUT
     - name: Upload kfx release asset
-      uses: actions/upload-release-asset@v1.0.2
+      uses: actions/action-gh-release@v1
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.gen_vars.outputs.release_url }}
-        asset_path: ${{ steps.build_kfx_deb.outputs.kfx_deb_path }}
-        asset_name: ${{ steps.build_kfx_deb.outputs.kfx_deb_name }}
-        asset_content_type: application/vnd.debian.binary-package
+        token: ${{ secrets.GITHUB_TOKEN }}
+        repository: novafacing/kfx-sandbox
+        files: ${{ steps.build_kfx_deb.outputs.kfx_deb_path }}
+        body: "Automated release."
